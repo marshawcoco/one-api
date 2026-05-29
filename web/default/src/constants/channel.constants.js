@@ -1,6 +1,13 @@
 export const CHANNEL_OPTIONS = [
   { key: 1, text: 'OpenAI', value: 1, color: 'green' },
   {
+    key: 52,
+    text: 'Codex OAuth',
+    value: 52,
+    color: 'black',
+    description: 'Codex OAuth 托管账号渠道（开发中）',
+  },
+  {
     key: 50,
     text: 'OpenAI 兼容',
     value: 50,

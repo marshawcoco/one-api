@@ -39,6 +39,15 @@ const defaultConfig = {
 };
 
 const typeConfig = {
+  52: {
+    input: {
+      models: ['gpt-5-codex']
+    },
+    prompt: {
+      key: 'Codex OAuth 渠道暂不使用静态 API Key'
+    },
+    modelGroup: 'openai'
+  },
   3: {
     inputLabel: {
       base_url: 'AZURE_OPENAI_ENDPOINT',

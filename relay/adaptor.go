@@ -8,6 +8,7 @@ import (
 	"github.com/songquanpeng/one-api/relay/adaptor/aws"
 	"github.com/songquanpeng/one-api/relay/adaptor/baidu"
 	"github.com/songquanpeng/one-api/relay/adaptor/cloudflare"
+	"github.com/songquanpeng/one-api/relay/adaptor/codexoauth"
 	"github.com/songquanpeng/one-api/relay/adaptor/cohere"
 	"github.com/songquanpeng/one-api/relay/adaptor/coze"
 	"github.com/songquanpeng/one-api/relay/adaptor/deepl"
@@ -64,6 +65,8 @@ func GetAdaptor(apiType int) adaptor.Adaptor {
 		return &proxy.Adaptor{}
 	case apitype.Replicate:
 		return &replicate.Adaptor{}
+	case apitype.CodexOAuth:
+		return &codexoauth.Adaptor{}
 	}
 	return nil
 }
