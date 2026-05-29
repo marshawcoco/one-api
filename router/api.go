@@ -68,6 +68,16 @@ func SetApiRouter(router *gin.Engine) {
 			optionRoute.GET("/", controller.GetOptions)
 			optionRoute.PUT("/", controller.UpdateOption)
 		}
+		codexOAuthRoute := apiRouter.Group("/codex_oauth")
+		codexOAuthRoute.Use(middleware.AdminAuth())
+		{
+			codexOAuthRoute.GET("/status", controller.GetCodexOAuthStatus)
+			codexOAuthRoute.GET("/accounts", controller.ListCodexOAuthAccounts)
+			codexOAuthRoute.POST("/login", controller.StartCodexOAuthLogin)
+			codexOAuthRoute.POST("/poll", controller.PollCodexOAuthAccount)
+			codexOAuthRoute.PUT("/accounts/:account_id/default", controller.SetDefaultCodexOAuthAccount)
+			codexOAuthRoute.DELETE("/accounts/:account_id", controller.DeleteCodexOAuthAccount)
+		}
 		channelRoute := apiRouter.Group("/channel")
 		channelRoute.Use(middleware.AdminAuth())
 		{
