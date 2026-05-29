@@ -40,11 +40,25 @@ const defaultConfig = {
 
 const typeConfig = {
   52: {
+    inputLabel: {
+      key: '',
+      config: {
+        account_id: 'ChatGPT Account ID'
+      }
+    },
     input: {
-      models: ['gpt-5-codex']
+      key: 'codex-oauth-managed-account',
+      models: ['gpt-5-codex'],
+      config: {
+        auth_provider: 'codex_oauth',
+        account_id: ''
+      }
     },
     prompt: {
-      key: 'Codex OAuth 渠道暂不使用静态 API Key'
+      key: '',
+      config: {
+        account_id: '关联的托管 ChatGPT 账号 ID，后续 OAuth 账号管理接入后由登录流程提供'
+      }
     },
     modelGroup: 'openai'
   },

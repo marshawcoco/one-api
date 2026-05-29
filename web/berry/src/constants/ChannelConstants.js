@@ -5,6 +5,12 @@ export const CHANNEL_OPTIONS = {
     value: 1,
     color: 'success'
   },
+  52: {
+    key: 52,
+    text: 'Codex OAuth',
+    value: 52,
+    color: 'primary'
+  },
   14: {
     key: 14,
     text: 'Anthropic Claude',

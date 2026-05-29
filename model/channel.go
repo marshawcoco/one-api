@@ -50,6 +50,15 @@ type ChannelConfig struct {
 	Plugin            string `json:"plugin,omitempty"`
 	VertexAIProjectID string `json:"vertex_ai_project_id,omitempty"`
 	VertexAIADC       string `json:"vertex_ai_adc,omitempty"`
+	AuthProvider      string `json:"auth_provider,omitempty"`
+	AccountID         string `json:"account_id,omitempty"`
+}
+
+func (config ChannelConfig) ManagedAccountIDFor(authProvider string) string {
+	if config.AuthProvider != authProvider {
+		return ""
+	}
+	return config.AccountID
 }
 
 func GetAllChannels(startIdx int, num int, scope string) ([]*Channel, error) {

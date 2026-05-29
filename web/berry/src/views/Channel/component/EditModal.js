@@ -108,7 +108,11 @@ const EditModal = ({ open, channelId, onCancel, onOk }) => {
       setFieldValue('models', initialModel(localModels));
     }
 
-    setFieldValue('config', {});
+    const typeInput = typeConfig[typeValue]?.input || {};
+    setFieldValue('config', typeInput.config || {});
+    if (typeInput.key !== undefined) {
+      setFieldValue('key', typeInput.key);
+    }
   };
 
   const fetchGroups = async () => {

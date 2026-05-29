@@ -64,12 +64,25 @@ const EditChannel = () => {
     user_id: '',
     vertex_ai_project_id: '',
     vertex_ai_adc: '',
+    auth_provider: '',
+    account_id: '',
   });
   const handleInputChange = (e, { name, value }) => {
     setInputs((inputs) => ({ ...inputs, [name]: value }));
     if (name === 'type') {
       let localModels = getChannelModels(value);
-      if (inputs.models.length === 0) {
+      if (value === 52) {
+        setConfig((config) => ({
+          ...config,
+          auth_provider: 'codex_oauth',
+          account_id: '',
+        }));
+        setInputs((inputs) => ({
+          ...inputs,
+          key: 'codex-oauth-managed-account',
+          models: inputs.models.length === 0 ? localModels : inputs.models,
+        }));
+      } else if (inputs.models.length === 0) {
         setInputs((inputs) => ({ ...inputs, models: localModels }));
       }
       setBasicModels(localModels);
@@ -179,7 +192,7 @@ const EditChannel = () => {
         inputs.key = `${config.region}|${config.vertex_ai_project_id}|${config.vertex_ai_adc}`;
       }
     }
-    if (!isEdit && (inputs.name === '' || inputs.key === '')) {
+    if (!isEdit && (inputs.name === '' || (inputs.key === '' && inputs.type !== 52))) {
       showInfo(t('channel.edit.messages.name_required'));
       return;
     }
@@ -594,8 +607,21 @@ const EditChannel = () => {
                 autoComplete=''
               />
             )}
+            {inputs.type === 52 && (
+              <Form.Field>
+                <Form.Input
+                  label='ChatGPT Account ID'
+                  name='account_id'
+                  placeholder='关联的托管 ChatGPT 账号 ID，后续 OAuth 账号管理接入后由登录流程提供'
+                  onChange={handleConfigChange}
+                  value={config.account_id}
+                  autoComplete='new-password'
+                />
+              </Form.Field>
+            )}
             {inputs.type !== 33 &&
               inputs.type !== 42 &&
+              inputs.type !== 52 &&
               (batch ? (
                 <Form.Field>
                   <Form.TextArea
@@ -651,7 +677,8 @@ const EditChannel = () => {
             {inputs.type !== 3 &&
               inputs.type !== 33 &&
               inputs.type !== 8 &&
-                inputs.type !== 50 &&
+              inputs.type !== 50 &&
+              inputs.type !== 52 &&
               inputs.type !== 22 && (
                 <Form.Field>
                   <Form.Input
