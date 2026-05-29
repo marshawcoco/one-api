@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/songquanpeng/one-api/model"
+	"github.com/songquanpeng/one-api/services/codexoauth"
 )
 
 type codexOAuthStatusResponse struct {
@@ -89,5 +90,6 @@ func DeleteCodexOAuthAccount(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"success": false, "message": err.Error()})
 		return
 	}
+	codexoauth.DefaultManager.ClearAccountToken(accountID)
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": ""})
 }
