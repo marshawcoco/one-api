@@ -19,6 +19,11 @@ func (token cachedAccessToken) valid() bool {
 	return token.token != "" && time.Until(token.expiresAt) > refreshBuffer
 }
 
+type TokenResult struct {
+	AccountID   string
+	AccessToken string
+}
+
 type Manager struct {
 	mu           sync.RWMutex
 	accessTokens map[string]cachedAccessToken
@@ -34,16 +39,18 @@ func NewManager() *Manager {
 	}
 }
 
-func (m *Manager) GetValidTokenForAccount(accountID string) (string, error) {
-	if accountID == "" {
-		return "", errors.New("codex oauth account_id is required")
+func (m *Manager) GetValidTokenForAccount(accountID string) (TokenResult, error) {
+	account, err := m.resolveAccount(accountID)
+	if err != nil {
+		return TokenResult{}, err
 	}
+	accountID = account.AccountID
 
 	m.mu.RLock()
 	cached, ok := m.accessTokens[accountID]
 	m.mu.RUnlock()
 	if ok && cached.valid() {
-		return cached.token, nil
+		return TokenResult{AccountID: accountID, AccessToken: cached.token}, nil
 	}
 
 	lock := m.refreshLock(accountID)
@@ -54,14 +61,25 @@ func (m *Manager) GetValidTokenForAccount(accountID string) (string, error) {
 	cached, ok = m.accessTokens[accountID]
 	m.mu.RUnlock()
 	if ok && cached.valid() {
-		return cached.token, nil
+		return TokenResult{AccountID: accountID, AccessToken: cached.token}, nil
 	}
 
-	account, err := model.GetCodexOAuthAccountByAccountID(accountID)
+	accessToken, err := m.refreshAccount(account)
 	if err != nil {
-		return "", err
+		return TokenResult{}, err
 	}
-	return m.refreshAccount(account)
+	return TokenResult{AccountID: accountID, AccessToken: accessToken}, nil
+}
+
+func (m *Manager) resolveAccount(accountID string) (*model.CodexOAuthAccount, error) {
+	if accountID != "" {
+		return model.GetCodexOAuthAccountByAccountID(accountID)
+	}
+	account, err := model.GetDefaultCodexOAuthAccount()
+	if err != nil {
+		return nil, errors.New("codex oauth account_id is required and no default account is available")
+	}
+	return account, nil
 }
 
 func (m *Manager) ClearAccountToken(accountID string) {

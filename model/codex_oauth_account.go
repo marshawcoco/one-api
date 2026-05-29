@@ -24,6 +24,16 @@ func GetCodexOAuthAccounts() ([]*CodexOAuthAccount, error) {
 	return accounts, err
 }
 
+func GetDefaultCodexOAuthAccount() (*CodexOAuthAccount, error) {
+	account := CodexOAuthAccount{}
+	err := DB.Where("is_default = ?", true).First(&account).Error
+	if err == nil {
+		return &account, nil
+	}
+	err = DB.Order("id asc").First(&account).Error
+	return &account, err
+}
+
 func GetCodexOAuthAccountByAccountID(accountID string) (*CodexOAuthAccount, error) {
 	account := CodexOAuthAccount{}
 	err := DB.Where("account_id = ?", accountID).First(&account).Error

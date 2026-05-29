@@ -40,15 +40,32 @@ func (a *Adaptor) GetRequestURL(meta *meta.Meta) (string, error) {
 
 func (a *Adaptor) SetupRequestHeader(c *gin.Context, req *http.Request, meta *meta.Meta) error {
 	accountID := meta.Config.ManagedAccountIDFor("codex_oauth")
-	accessToken, err := codexoauth.DefaultManager.GetValidTokenForAccount(accountID)
+	token, err := codexoauth.DefaultManager.GetValidTokenForAccount(accountID)
 	if err != nil {
 		return err
 	}
 	adaptor.SetupCommonRequestHeader(c, req, meta)
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("ChatGPT-Account-Id", accountID)
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+	req.Header.Set("ChatGPT-Account-Id", token.AccountID)
 	req.Header.Set("originator", originatorValue)
+	setSessionHeaders(c, req, meta)
 	return nil
+}
+
+func setSessionHeaders(c *gin.Context, req *http.Request, meta *meta.Meta) {
+	sessionID := strings.TrimSpace(c.Request.Header.Get("session_id"))
+	if sessionID == "" {
+		sessionID = strings.TrimSpace(c.Request.Header.Get("x-client-request-id"))
+	}
+	if sessionID == "" {
+		sessionID = strings.TrimSpace(c.GetString("id"))
+	}
+	if sessionID == "" {
+		return
+	}
+	req.Header.Set("session_id", sessionID)
+	req.Header.Set("x-client-request-id", sessionID)
+	req.Header.Set("x-codex-window-id", sessionID+":0")
 }
 
 func (a *Adaptor) ConvertRequest(c *gin.Context, relayMode int, request *model.GeneralOpenAIRequest) (any, error) {
