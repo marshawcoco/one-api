@@ -75,7 +75,7 @@ func (a *Adaptor) ConvertRequest(c *gin.Context, relayMode int, request *model.G
 	if relayMode != relaymode.Responses {
 		return nil, fmt.Errorf("codex oauth only supports responses relay mode, got %d", relayMode)
 	}
-	return request, nil
+	return convertToResponsesRequest(request), nil
 }
 
 func (a *Adaptor) ConvertImageRequest(request *model.ImageRequest) (any, error) {
