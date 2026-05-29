@@ -6,6 +6,7 @@ const (
 	Completions
 	Embeddings
 	Moderations
+	Responses
 	ImagesGenerations
 	Edits
 	AudioSpeech
