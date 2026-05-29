@@ -52,14 +52,14 @@ func ListCodexOAuthAccounts(c *gin.Context) {
 func StartCodexOAuthLogin(c *gin.Context) {
 	c.JSON(http.StatusNotImplemented, gin.H{
 		"success": false,
-		"message": "Codex OAuth login is not implemented yet",
+		"message": "Codex OAuth login requires a configured OAuth exchange backend and is not implemented in this build",
 	})
 }
 
 func PollCodexOAuthAccount(c *gin.Context) {
 	c.JSON(http.StatusNotImplemented, gin.H{
 		"success": false,
-		"message": "Codex OAuth polling is not implemented yet",
+		"message": "Codex OAuth polling requires a configured OAuth exchange backend and is not implemented in this build",
 	})
 }
 

@@ -41,6 +41,9 @@ func GetCodexOAuthAccountByAccountID(accountID string) (*CodexOAuthAccount, erro
 }
 
 func UpsertCodexOAuthAccount(account *CodexOAuthAccount) error {
+	if account.RefreshToken != "" {
+		account.RefreshToken = codexOAuthProtectRefreshToken(account.RefreshToken)
+	}
 	now := helper.GetTimestamp()
 	if account.CreatedTime == 0 {
 		account.CreatedTime = now
@@ -71,4 +74,16 @@ func SetDefaultCodexOAuthAccount(accountID string) error {
 
 func DeleteCodexOAuthAccount(accountID string) error {
 	return DB.Where("account_id = ?", accountID).Delete(&CodexOAuthAccount{}).Error
+}
+
+var codexOAuthProtectRefreshToken = func(token string) string {
+	return token
+}
+
+func SetCodexOAuthRefreshTokenProtector(protector func(string) string) {
+	if protector == nil {
+		codexOAuthProtectRefreshToken = func(token string) string { return token }
+		return
+	}
+	codexOAuthProtectRefreshToken = protector
 }

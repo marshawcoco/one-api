@@ -21,6 +21,7 @@ import (
 	"github.com/songquanpeng/one-api/model"
 	"github.com/songquanpeng/one-api/relay/adaptor/openai"
 	"github.com/songquanpeng/one-api/router"
+	"github.com/songquanpeng/one-api/services/codexoauth"
 )
 
 //go:embed web/build/*
@@ -37,6 +38,8 @@ func main() {
 	if config.DebugEnabled {
 		logger.SysLog("running in debug mode")
 	}
+
+	model.SetCodexOAuthRefreshTokenProtector(codexoauth.ProtectRefreshToken)
 
 	// Initialize SQL Database
 	model.InitDB()

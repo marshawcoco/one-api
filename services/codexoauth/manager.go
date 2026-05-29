@@ -106,7 +106,11 @@ func (m *Manager) refreshLock(accountID string) *sync.Mutex {
 }
 
 func (m *Manager) refreshAccount(account *model.CodexOAuthAccount) (string, error) {
-	if account.RefreshToken == "" {
+	refreshToken, err := UnprotectRefreshToken(account.RefreshToken)
+	if err != nil {
+		return "", err
+	}
+	if refreshToken == "" {
 		return "", errors.New("codex oauth refresh token is missing")
 	}
 	return "", errors.New("codex oauth token refresh is not implemented yet")
